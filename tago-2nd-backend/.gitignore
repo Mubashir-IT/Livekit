@@ -1,0 +1,18 @@
+# Node.js dependencies
+node_modules/
+google-cloud.json/
+Dockerfile
+live
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# TypeScript build output
+dist/
+
+# Other commonly ignored files
+# .env

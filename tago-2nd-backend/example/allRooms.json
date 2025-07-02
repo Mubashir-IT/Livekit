@@ -1,0 +1,93 @@
+{
+    "success": true,
+    "rooms": [
+        {
+            "sid": "RM_Td7xCRBkw9Xr",
+            "name": "cyberify developers",
+            "emptyTimeout": 600,
+            "maxParticipants": 20,
+            "creationTime": "1744021200",
+            "turnPassword": "",
+            "enabledCodecs": [
+                {
+                    "mime": "video/H264",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "video/VP8",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "video/VP9",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "video/AV1",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "audio/red",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "audio/opus",
+                    "fmtpLine": ""
+                }
+            ],
+            "metadata": "",
+            "numParticipants": 0,
+            "activeRecording": false,
+            "numPublishers": 0,
+            "version": {
+                "unixMicro": "1744021200272140",
+                "ticks": 0
+            },
+            "departureTimeout": 20,
+            "creationTimeMs": "1744021200119"
+        },
+        {
+            "sid": "RM_VLr9aWKKqLpF",
+            "name": "cyberify developer 2",
+            "emptyTimeout": 600,
+            "maxParticipants": 20,
+            "creationTime": "1744021247",
+            "turnPassword": "",
+            "enabledCodecs": [
+                {
+                    "mime": "video/H264",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "video/VP8",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "video/VP9",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "video/AV1",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "audio/red",
+                    "fmtpLine": ""
+                },
+                {
+                    "mime": "audio/opus",
+                    "fmtpLine": ""
+                }
+            ],
+            "metadata": "",
+            "numParticipants": 0,
+            "activeRecording": false,
+            "numPublishers": 0,
+            "version": {
+                "unixMicro": "1744021247390444",
+                "ticks": 0
+            },
+            "departureTimeout": 20,
+            "creationTimeMs": "1744021247247"
+        }
+    ]
+}

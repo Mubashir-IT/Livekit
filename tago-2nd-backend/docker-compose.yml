@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tagobit
+      MYSQL_USER: tagobit
+      MYSQL_PASSWORD: tagobit
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: tagobit
+      DB_PASSWORD: tagobit
+      DB_NAME: tagobit
+      # Add other env vars as needed
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+
+volumes:
+  db_data:

@@ -1,0 +1,48 @@
+{
+    "success": true,
+    "room": {
+        "sid": "RM_VLr9aWKKqLpF",
+        "name": "cyberify developer 2",
+        "emptyTimeout": 600,
+        "maxParticipants": 20,
+        "creationTime": "1744021247",
+        "turnPassword": "",
+        "enabledCodecs": [
+            {
+                "mime": "video/H264",
+                "fmtpLine": ""
+            },
+            {
+                "mime": "video/VP8",
+                "fmtpLine": ""
+            },
+            {
+                "mime": "video/VP9",
+                "fmtpLine": ""
+            },
+            {
+                "mime": "video/AV1",
+                "fmtpLine": ""
+            },
+            {
+                "mime": "audio/red",
+                "fmtpLine": ""
+            },
+            {
+                "mime": "audio/opus",
+                "fmtpLine": ""
+            }
+        ],
+        "metadata": "",
+        "numParticipants": 0,
+        "activeRecording": false,
+        "numPublishers": 0,
+        "version": {
+            "unixMicro": "1744021247390444",
+            "ticks": 0
+        },
+        "departureTimeout": 20,
+        "creationTimeMs": "1744021247247"
+    }
+}
+{/* http://localhost:5173/room?token=eyJhbGciOiJIUzI1NiJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6ImN5YmVyaWZ5IGRldmVsb3BlcnMiLCJjYW5QdWJsaXNoIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWV9LCJpc3MiOiJBUElQNExTVGhqZ21MbnQiLCJleHAiOjE3NDQwMjQ0MzYsIm5iZiI6MCwic3ViIjoicyJ9.XdFRIKBQJpjrJ-Pa4wq4LuU3jYzJ-6tll6-FqjSajXA&roomName=cyberify%20developers */}
