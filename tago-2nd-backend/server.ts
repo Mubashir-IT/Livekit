@@ -19,6 +19,7 @@ import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
 // LiveKit server SDK
 import { RoomServiceClient, AccessToken } from "livekit-server-sdk";
+import userRoutes from "./routes/userRoutes";
 
 // Get current file path and directory using import.meta for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -62,7 +63,7 @@ app.use((req, res, next) => {
 
 // Middleware to handle file uploads (multipart/form-data)
 const upload = multer(); // You can specify storage settings here if needed
-app.use(upload.any()); // Allows any form data to be parsed
+// app.use(upload.any()); // Allows any form data to be parsed
 
 // Custom middleware to handle `Accept` header
 app.use((req, res, next) => {
@@ -99,6 +100,7 @@ app.use(`${prefixApi}room`, roomRoutes);
 app.use(`${prefixApi}auth`, authRoutes);
 app.use(`${prefixApi}audio`, audioRoutes);
 app.use(`${prefixApi}translate`, translateRoutes);
+app.use(`${prefixApi}user`, userRoutes);
 //
 
 app.get("/", (req: Request, res: Response) => {
@@ -115,6 +117,9 @@ if (!fs.existsSync(audioStoragePath)) {
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK" });
 });
+
+// Serve static files from uploads folder
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Socket.IO server for WebRTC signaling
 const httpServer = createServer(app);

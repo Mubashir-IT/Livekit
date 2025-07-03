@@ -16,6 +16,7 @@ import {
   userDataFormat,
   userTokenGenerate,
 } from "../config/helpers";
+import path from "path";
 
 // Register User
 export const registerUser = async (
@@ -367,6 +368,30 @@ export const updateUserStatus = async (
     user.status = status;
     await user.save();
     res.status(200).json({ success: true, message: "Status updated", status });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Upload Profile Image
+export const uploadProfileImage = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No image file uploaded" });
+    }
+    // Save file path in DB (relative to /uploads)
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    user.imageUrl = imageUrl;
+    await user.save();
+    res.status(200).json({ success: true, imageUrl });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }

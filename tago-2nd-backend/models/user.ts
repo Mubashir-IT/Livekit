@@ -29,6 +29,8 @@ interface UserAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date | null; // For soft deletes
+  imageUrl?: string | null;
+
 }
 
 // Define the creation attributes for the User model
@@ -43,6 +45,7 @@ interface UserCreationAttributes
     | "updatedAt"
     | "deletedAt"
     | "verifiedAt"
+    | "imageUrl"
   > {}
 
 // Extend the Sequelize Model class
@@ -80,6 +83,9 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public readonly deletedAt!: Date | null;
+  @IsOptional()
+  @IsString()
+  public imageUrl?: string | null;
 
   // Method to check password validity
   public async isValidPassword(password: string): Promise<boolean> {
@@ -157,6 +163,11 @@ export default function initUserModel(sequelize: Sequelize): typeof User {
         type: DataTypes.ENUM("online", "offline"),
         defaultValue: "offline",
         allowNull: false,
+      },
+      imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
       },
     },
     {

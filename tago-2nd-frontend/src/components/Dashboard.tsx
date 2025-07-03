@@ -28,13 +28,20 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [sessionInput, setSessionInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  const { setRoomId , setrole} = useContext(RoomContext);
+  const { setRoomId, setrole } = useContext(RoomContext);
 
   const user = Helpers.getUserData();
   const userId = user?.id;
   const userName = user?.fullName || user?.name || "User";
+
+  const profileImage = user?.imageUrl
+    ? user?.imageUrl.startsWith("http")
+      ? user.imageUrl
+      : Helpers.baseUrl + user.imageUrl
+    : image;
 
   const generateMeetingId = () => {
     const nums = Array.from({ length: 12 }, () =>
@@ -113,6 +120,11 @@ const Dashboard = () => {
     }
   };
 
+  // Filter sessions by room name (case-insensitive)
+  const filteredSessions = sessions.filter((session: any) =>
+    session.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-white p-4 md:p-8 flex flex-col gap-6">
       {/* Dialog */}
@@ -149,8 +161,8 @@ const Dashboard = () => {
         >
           <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-400 to-blue-700 flex items-center justify-center text-white font-bold text-xl border-2 border-white shadow-md">
             <img
-              src={image}
-              alt=""
+              src={profileImage}
+              alt="Profile"
               className="w-full h-full rounded-full object-cover"
             />
           </div>
@@ -168,8 +180,10 @@ const Dashboard = () => {
         <div className="flex-1 flex items-center gap-3 max-w-md ml-auto md:order-none order-1 mt-20 md:mt-0">
           <Input
             className="bg-gray-100 border-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder:text-gray-400"
-            placeholder="Search"
+            placeholder="Search room name"
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200">
             <svg
@@ -214,7 +228,7 @@ const Dashboard = () => {
           {loading ? (
             <div className="p-4 text-gray-500">Loading sessions...</div>
           ) : sessions.length > 0 ? (
-            sessions.map((session: any, idx: number) => {
+            filteredSessions.map((session: any, idx: number) => {
               const isSpeaker = session.user_id === userId;
               return (
                 <div
@@ -252,9 +266,9 @@ const Dashboard = () => {
                     <Button
                       variant="outline"
                       className="border-blue-700 text-blue-700 hover:bg-blue-50 px-8 py-1.5 rounded-lg text-base font-medium transition-all shadow-none group-hover:border-blue-800 group-hover:text-blue-800"
-                      onClick={() =>{
-                         navigate("/languageselector"),
-                        setRoomId(session.sid || session.roomId || session.meetingId);
+                      onClick={() => {
+                        navigate("/languageselector"),
+                          setRoomId(session.sid || session.roomId || session.meetingId);
                         setrole(isSpeaker ? "creator" : "listener");
                       }}
                     >

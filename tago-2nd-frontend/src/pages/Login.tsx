@@ -14,12 +14,12 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-useEffect(()=>{
-  const token = localStorage.getItem("token");
-  if(token){
-    navigate("/");
-  }
-},[])
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/");
+    }
+  }, []);
   const handleSignIn = async () => {
     setIsSubmitting(true);
     try {
@@ -31,7 +31,7 @@ useEffect(()=>{
 
       console.log("response.data", response.data);
       if (!response.data.success) {
-        console.log("response.data.redirectUrl", response.data.redirectUrl)
+        console.log("response.data.redirectUrl", response.data.redirectUrl);
 
         if (response.data.redirectUrl) {
           window.location.href = response.data.redirectUrl;
@@ -42,8 +42,7 @@ useEffect(()=>{
         setIsSubmitting(false);
         return;
       }
-
-
+      
       const { token, user } = response.data;
       const enrichedUser = {
         ...user,
@@ -52,11 +51,23 @@ useEffect(()=>{
 
       Helpers.saveUserLocal({ token, user: enrichedUser });
       toast("success  User Logged In Successfully");
-      localStorage.setItem("isAuthenticated", status ? "true" : "false")
+      localStorage.setItem("isAuthenticated", status ? "true" : "false");
+      // Set user status to online in DB
+      await fetch(`${Helpers.apiUrl}auth/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: "online" }),
+      });
+      // Update local user status for UI
+      const updatedUser = { ...enrichedUser, status: "online" };
+      Helpers.saveUserLocal({ token, user: updatedUser });
       // navigate("/");
-      onLogin()
+      onLogin();
     } catch (error: any) {
-      console.log("response.data.redirectUrl", error.response?.data?.redirectUrl)
+      console.log("response.data.redirectUrl", error.response?.data?.redirectUrl);
       // window.location.href = error.response?.data?.redirectUrl || "/login";
 
       Helpers.toast("error", error?.response?.data?.message || "Login failed");
@@ -139,7 +150,7 @@ useEffect(()=>{
 
             {/* Submit */}
             <button
-            type="button"
+              type="button"
               onClick={handleSignIn}
               disabled={isSubmitting}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition font-medium"

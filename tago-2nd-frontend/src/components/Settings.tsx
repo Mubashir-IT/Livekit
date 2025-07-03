@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation after logout
 import {
   User,
@@ -21,8 +21,12 @@ const Settings = () => {
   const user = Helpers.getUserData();
   const userName = user?.fullName || user?.name || "User";
   const userEmail = user?.email || "user@email.com";
-  const [status] = useState(user?.status || "Online");
+  // Show live status from localStorage (updated on login/logout)
+  const [status, setStatus] = useState(user?.status || "offline");
   const [language] = useState(user?.language || "English (US)");
+  const [profileImage, setProfileImage] = useState(user?.imageUrl ? Helpers.baseUrl + user.imageUrl : image);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const settingsItems = [
     {
@@ -41,6 +45,8 @@ const Settings = () => {
       icon: Video,
       label: "Sessions",
       hasArrow: true,
+      onClick: () => navigate("/"), // Navigate to dashboard on click
+
     },
     {
       icon: Globe,
@@ -55,11 +61,69 @@ const Settings = () => {
     },
   ];
 
-  //  Logout handler
-  const handleLogout = () => {
-    localStorage.clear(); // Clear all localStorage (or use removeItem if needed)
-    navigate("/login"); // Redirect to login page (adjust route as needed)
+  // Handle image upload
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("image", file);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${Helpers.baseUrl}/api/v1/user/upload-image`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success && data.imageUrl) {
+        setProfileImage(Helpers.baseUrl + data.imageUrl);
+        // Update local userData
+        const user = Helpers.getUserData();
+        if (user) {
+          user.imageUrl = data.imageUrl;
+          Helpers.saveUserLocal({ token: token || "", user });
+        }
+      }
+    } catch (err) {
+      console.error("Image upload failed", err);
+    }
   };
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        await fetch(`${Helpers.apiUrl}auth/status`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: "offline" }),
+        });
+        // Also update local user data status
+        const user = Helpers.getUserData();
+        if (user) {
+          user.status = "offline";
+          Helpers.saveUserLocal({ token, user });
+        }
+      } catch (e) {
+        console.error("Failed to update user status to offline", e);
+      }
+    }
+    Helpers.userLogout();
+    navigate("/login");
+  };
+
+  // Keep status in sync with localStorage
+  useEffect(() => {
+    const syncStatus = () => {
+      const user = Helpers.getUserData();
+      setStatus(user?.status || "offline");
+    };
+    window.addEventListener("storage", syncStatus);
+    return () => window.removeEventListener("storage", syncStatus);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,9 +143,17 @@ const Settings = () => {
               <div className="relative">
                 <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
                   <img
-                    src={image}
+                    src={profileImage}
                     alt="Profile"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    onChange={handleImageChange}
                   />
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
@@ -109,6 +181,7 @@ const Settings = () => {
               <div
                 key={index}
                 className="px-6 py-4 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
+                onClick={item.onClick}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
